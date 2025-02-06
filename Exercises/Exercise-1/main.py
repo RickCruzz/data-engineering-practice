@@ -1,4 +1,7 @@
+#%%
 import requests
+import zipfile
+import os
 
 download_uris = [
     "https://divvy-tripdata.s3.amazonaws.com/Divvy_Trips_2018_Q4.zip",
@@ -10,11 +13,30 @@ download_uris = [
     "https://divvy-tripdata.s3.amazonaws.com/Divvy_Trips_2220_Q1.zip",
 ]
 
+def unzip_remove(ret, directory, name_file):
+    open(f'{directory}/{name_file}.zip', 'wb').write(ret.content)
+    
+    with zipfile.ZipFile(f'{directory}/{name_file}.zip',"r") as zip_ref:
+        zip_ref.extractall(f"{directory}")
+
+    os.remove(f'{directory}/{name_file}.zip')
+
+
 
 def main():
-    # your code here
-    pass
+    directory = "./downloads"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    for url in download_uris:
+        name_file = url.split("/")[-1]
+        ret = requests.get(url)
+        if ret.status_code == 200:
+            unzip_remove(ret, directory=directory, name_file=name_file)
+        else:
+            print(f"{ret.status_code} - File Not found check URL: {url}")
 
 
 if __name__ == "__main__":
     main()
+#%%
