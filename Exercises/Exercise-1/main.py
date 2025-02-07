@@ -25,9 +25,8 @@ def unzip_remove(ret, directory, name_file):
 
 def main():
     directory = "./downloads"
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
+    os.makedirs(directory, exist_ok=True)
+    
     for url in download_uris:
         name_file = url.split("/")[-1]
         ret = requests.get(url)
